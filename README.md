@@ -284,6 +284,7 @@ pipx install .
 Build the distributable artifacts from the project root:
 
 ```bash
+rm -rf dist
 uv build
 ```
 
@@ -303,6 +304,8 @@ uv tool install dist/*.whl
 When you are ready to publish:
 
 ```bash
+rm -rf dist
+uv build
 uv publish
 ```
 
@@ -311,8 +314,11 @@ Typical release flow:
 1. Update the version in `pyproject.toml`
 2. Run `uv sync`
 3. Run validation checks
-4. Build with `uv build`
-5. Publish with `uv publish`
+4. Remove old artifacts with `rm -rf dist`
+5. Build with `uv build`
+6. Publish with `uv publish`
+
+PyPI rejects filename reuse, so leaving older wheels or source distributions in `dist/` can cause `uv publish` to fail by attempting to upload both the new version and stale artifacts from a previous release.
 
 After publishing, users can install the CLI directly from PyPI:
 
