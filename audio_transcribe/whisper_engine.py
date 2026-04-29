@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import json
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -32,7 +34,8 @@ class WhisperEngine:
         import whisper
 
         logger.info("Loading Whisper model '%s' on %s.", self.config.model_name, self.config.device)
-        return whisper.load_model(self.config.model_name, device=self.config.device)
+        with self._dependency_stdout_to_stderr():
+            return whisper.load_model(self.config.model_name, device=self.config.device)
 
     def process_record(self, record: Record) -> Record:
         if should_skip_error(record):
@@ -58,12 +61,13 @@ class WhisperEngine:
 
         cached_payload = self._read_cache(source_path)
         if cached_payload is None:
-            result = self.model.transcribe(
-                str(source_path),
-                language=None if self.config.language == "auto" else self.config.language,
-                verbose=False,
-                fp16=self.config.device == "cuda",
-            )
+            with self._dependency_stdout_to_stderr():
+                result = self.model.transcribe(
+                    str(source_path),
+                    language=None if self.config.language == "auto" else self.config.language,
+                    verbose=False,
+                    fp16=self.config.device == "cuda",
+                )
             cached_payload = {
                 "transcript": result.get("text", "").strip(),
                 "segments": [
@@ -110,6 +114,12 @@ class WhisperEngine:
         if cache_path is None:
             return
         cache_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+    @staticmethod
+    @contextlib.contextmanager
+    def _dependency_stdout_to_stderr():
+        with contextlib.redirect_stdout(sys.stderr):
+            yield
 
 
 def resolve_device(requested: str) -> str:
