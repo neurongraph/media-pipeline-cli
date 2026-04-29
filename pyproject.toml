@@ -1,0 +1,66 @@
+[project]
+name = "media-pipeline-cli"
+version = "0.1.0"
+description = "Composable JSONL-first CLI tools for YouTube media pipelines."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [
+  { name = "Surjit Das" },
+]
+maintainers = [
+  { name = "Surjit Das" },
+]
+keywords = [
+  "cli",
+  "jsonl",
+  "media-pipeline",
+  "transcription",
+  "whisper",
+  "youtube",
+  "yt-dlp",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Multimedia :: Sound/Audio",
+  "Topic :: Multimedia :: Video",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Utilities",
+]
+dependencies = [
+  "click",
+  "openai-whisper",
+  "yt-dlp",
+]
+
+[project.urls]
+Homepage = "https://github.com/neurongraph/media-pipeline-cli-tools"
+Repository = "https://github.com/neurongraph/media-pipeline-cli-tools"
+Issues = "https://github.com/neurongraph/media-pipeline-cli-tools/issues"
+
+[project.scripts]
+yt-watchlist = "yt_watchlist.cli:cli"
+yt-fetch = "yt_fetch.cli:cli"
+audio-transcribe = "audio_transcribe.cli:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+  "common",
+  "yt_watchlist",
+  "yt_fetch",
+  "audio_transcribe",
+]

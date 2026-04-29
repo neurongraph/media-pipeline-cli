@@ -1,0 +1,1 @@
+"""YouTube media downloader CLI."""
